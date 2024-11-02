@@ -518,31 +518,53 @@
             });
         });
 
-        // Audio setup and fade in
-        const audio = document.getElementById('ambient-music');
-        audio.volume = 0;
+        // Audio setup with user interaction handling
+const audio = document.getElementById('ambient-music');
+audio.volume = 0;
 
-        // Function to handle audio fade in
-        function fadeInAudio() {
-            if (audio.volume < 0.5) { // Max volume set to 0.5 (50%)
-                audio.volume = Math.min(0.5, audio.volume + 0.01);
-                setTimeout(fadeInAudio, 100); // Increment volume every 100ms
-            }
-        }
+// Function to handle audio fade in
+function fadeInAudio() {
+    if (audio.volume < 0.5) { // Max volume set to 0.5 (50%)
+        audio.volume = Math.min(0.5, audio.volume + 0.01);
+        setTimeout(fadeInAudio, 100); // Increment volume every 100ms
+    }
+}
 
-        // Start playing audio with fade in when page loads
-        window.addEventListener('load', () => {
-            // Some browsers block autoplay, so we need to handle that
-            const playPromise = audio.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    fadeInAudio();
-                }).catch(error => {
-                    console.log("Autoplay prevented by browser");
-                });
-            }
+// Function to start audio with fade
+function startAudioWithFade() {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            fadeInAudio();
+        }).catch(error => {
+            console.log("Audio playback failed:", error);
         });
+    }
+}
+
+// Try to start audio on page load
+window.addEventListener('load', () => {
+    startAudioWithFade();
+});
+
+// Fallback: Start audio on first user interaction
+document.addEventListener('click', function initAudioOnFirstClick() {
+    startAudioWithFade();
+    // Remove the event listener after first click
+    document.removeEventListener('click', initAudioOnFirstClick);
+}, { once: true });
+
+// Additional fallback for various user interactions
+['keydown', 'mousemove', 'touchstart'].forEach(eventType => {
+    document.addEventListener(eventType, function initAudioOnFirstInteraction() {
+        startAudioWithFade();
+        // Remove all event listeners after first interaction
+        ['keydown', 'mousemove', 'touchstart'].forEach(type => {
+            document.removeEventListener(type, initAudioOnFirstInteraction);
+        });
+    }, { once: true });
+});
+        
 
         // Start animation
         animate();
