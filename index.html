@@ -51,7 +51,6 @@
             opacity: 0;
             transform: translateY(20px);
             background: linear-gradient(45deg, #fff, #f0f0f0);
-            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% 200%;
             animation: gradient 8s ease infinite;
@@ -117,19 +116,6 @@
             height: 24px;
         }
 
-        .audio-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: none;
-            border: 1px solid #fff;
-            color: #fff;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
         @media (max-width: 768px) {
             .content {
                 transform: scale(0.85);
@@ -155,9 +141,8 @@
 </head>
 <body>
     <audio id="ambient-music" loop>
-        <source src="https://raw.githubusercontent.com/asrarfarooq/asrarfarooq/main/Poem%20of%20the%20Clouds%20-%20Beautiful%20Piano%20Music%20for%20RelaxationBigRicePiano.mp3" type="audio/mpeg">
+        <source src="https://raw.githubusercontent.com/Asrarfarooq/asrar/main/Poem%20of%20the%20Clouds%20-%20Beautiful%20Piano%20Music%20for%20RelaxationBigRicePiano.mp3" type="audio/mpeg">
     </audio>
-    <button class="audio-control" id="audioToggle">♪</button>
     <canvas id="canvas"></canvas>
     <div class="content">
         <h1 class="name">Asrar Farooq</h1>
@@ -419,44 +404,34 @@
         class AudioController {
             constructor() {
                 this.audio = document.getElementById('ambient-music');
-                this.toggleButton = document.getElementById('audioToggle');
-                this.isPlaying = false;
                 this.fadeDuration = 3000;
-                this.toggleButton.addEventListener('click', () => this.toggleAudio());
+                this.audio.volume = 0; // Start with volume at 0
             }
 
-            toggleAudio() {
-                if (this.isPlaying) {
-                    this.fadeOut();
-                } else {
-                    this.fadeIn();
-                }
+            play() {
+                this.audio.play()
+                    .then(() => this.fadeIn()) // Fade in on successful play
+                    .catch(error => {
+                        console.error('Audio playback failed:', error);
+                        this.displayError('Failed to play audio. Please try again later.');
+                    });
             }
-
             fadeIn() {
-                this.audio.play().catch(error => {
-                    console.log('Audio playback failed:', error);
-                });
-                this.isPlaying = true;
-                gsap.to(this.audio, {
-                    volume: 0.5,
-                    duration: this.fadeDuration / 1000,
-                    onComplete: () => {
-                        this.toggleButton.textContent = '🔊';
-                    }
+              gsap.to(this.audio, {
+                volume: 0.5,
+                duration: this.fadeDuration / 1000,
                 });
             }
 
-            fadeOut() {
-                this.isPlaying = false;
-                gsap.to(this.audio, {
-                    volume: 0,
-                    duration: this.fadeDuration / 1000,
-                    onComplete: () => {
-                        this.audio.pause();
-                        this.toggleButton.textContent = '♪';
-                    }
-                });
+            displayError(message) {
+                const errorDiv = document.getElementById('audio-error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+
+                // Hide the error message after a few seconds
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000); // 5 seconds
             }
         }
 
@@ -480,9 +455,28 @@
             }
         }
 
-        const particleSystem = new ParticleSystem();
-        const audioController = new AudioController();
-        new TouchHandler();
+
+        let audioController;
+        let particleSystem;
+        let playedOnce = false; // Flag to track if audio has played
+
+        document.addEventListener('DOMContentLoaded', () => {
+            audioController = new AudioController();
+            particleSystem = new ParticleSystem();
+            new TouchHandler();
+
+            function handleFirstClick() {
+                if (!playedOnce) {
+                    audioController.play();
+                    playedOnce = true;
+                    document.removeEventListener('click', handleFirstClick); // Remove the listener
+                }
+            }
+
+            document.addEventListener('click', handleFirstClick); // Listen for clicks on the document
+
+            animate();
+        });
 
         const mouse = new THREE.Vector2();
         const targetMouse = new THREE.Vector2();
@@ -499,12 +493,13 @@
             }, 100);
         });
 
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', (e) => { // Keep this for the explosion effect!
             particleSystem.createExplosion(
                 (e.clientX / window.innerWidth) * 10 - 5,
                 -(e.clientY / window.innerHeight) * 10 + 5
             );
         });
+
 
         function animate() {
             requestAnimationFrame(animate);
@@ -533,8 +528,6 @@
                 gsap.to(link, { scale: 1, duration: 0.3, ease: 'power2.out' });
             });
         });
-
-        animate();
     </script>
 </body>
 </html>
