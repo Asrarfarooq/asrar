@@ -23,23 +23,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: fixed;
+            position: fixed; /* Ensures body takes full viewport and stays fixed */
             width: 100%;
-            touch-action: none;
+            touch-action: none; /* Prevent default touch actions like scrolling */
         }
 
         #canvas {
-            position: fixed;
+            position: fixed; /* Changed from absolute to fixed for better consistency */
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: -1; /* Ensure canvas is behind content */
         }
 
         .content {
             text-align: center;
             padding: 2rem;
             max-width: 800px;
-            position: relative;
+            position: relative; /* Needed for z-index stacking if any */
             transform-origin: center center;
             transform: scale(1);
         }
@@ -51,9 +51,9 @@
             opacity: 0;
             transform: translateY(20px);
             background: linear-gradient(45deg, #fff, #f0f0f0);
-            background-clip: inherit;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background-clip: inherit; /* Standard property */
+            -webkit-background-clip: text; /* For Safari/Chrome */
+            -webkit-text-fill-color: transparent; /* For Safari/Chrome */
             background-size: 200% 200%;
             animation: gradient 8s ease infinite;
         }
@@ -66,7 +66,7 @@
 
         .title {
             font-size: 1.5rem;
-            color: #fff;
+            color: #fff; /* Ensuring text is visible on dark background */
             margin-bottom: 2rem;
             opacity: 0;
             transform: translateY(20px);
@@ -75,6 +75,7 @@
         .social-links {
             display: flex;
             justify-content: center;
+            align-items: center; /* Added for better vertical alignment of icons */
             gap: 2rem;
             margin-top: 3rem;
             opacity: 0;
@@ -86,12 +87,15 @@
             text-decoration: none;
             transition: all 0.3s ease;
             position: relative;
-            padding: 10px;
+            padding: 10px; /* This padding creates space for the ::after circle */
+            display: inline-flex; /* Helps align SVG within the padded area */
+            align-items: center;
+            justify-content: center;
         }
 
         .social-links a:hover {
-            color: #fff;
-            transform: translateY(-2px);
+            color: #fff; /* Ensure icon color remains white on hover */
+            transform: translateY(-2px); /* Slight lift effect */
         }
 
         .social-links a:hover::after {
@@ -102,8 +106,8 @@
         .social-links a::after {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; /* Full width of the <a> tag (including padding) */
+            height: 100%; /* Full height of the <a> tag (including padding) */
             border: 1px solid #fff;
             border-radius: 50%;
             top: 0;
@@ -111,13 +115,16 @@
             transform: scale(0.8);
             opacity: 0;
             transition: all 0.3s ease;
+            z-index: -1; /* Ensure circle is behind the icon */
         }
 
         .social-links svg {
             width: 24px;
             height: 24px;
+            display: block; /* Ensures SVG behaves as a block element */
         }
 
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .content {
                 transform: scale(0.85);
@@ -134,7 +141,7 @@
             }
         }
 
-        @media (max-width: 350px) {
+        @media (max-width: 350px) { /* Further scaling for very small screens */
             .content {
                 transform: scale(0.75);
             }
@@ -165,7 +172,7 @@
                     <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM9 13h6v2H9v-2zm0 3h6v2H9v-2zm0-6h4v2H9v-2z"/>
                 </svg>
             </a>
-            <a href="http://blog.asrar.xyz" target="_blank" title="Blog" style="display: inline-block; width: 24px; height: 24px; margin: 4px;">
+            <a href="http://blog.asrar.xyz" target="_blank" title="Blog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 2H4C2.897 2 2 2.897 2 4v16c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM8 17H6v-2h2v2zm0-3H6v-2h2v2zm0-3H6V9h2v2zm10 6h-8v-2h8v2zm0-3h-8v-2h8v2zm0-3h-8V9h8v2z"/>
                 </svg>
