@@ -178,6 +178,38 @@
                 </svg>
             </a>
         </div>
+        <div class="more-link">
+    <a href="./more.html">More</a>
+</div>
+
+<style>
+    .more-link {
+        margin-top: 1.5rem;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .more-link a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.78;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .more-link a:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+</style>
+
+<script>
+    gsap.to('.more-link', { opacity: 1, y: 0, duration: 1.5, delay: 0.85, ease: 'power3.out' });
+</script>
+
     </div>
 
     <script>

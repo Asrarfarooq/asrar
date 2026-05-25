@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>More | Asrar Farooq</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+        }
+
+        .page {
+            min-height: 100vh;
+            width: min(920px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: clamp(2rem, 7vw, 5rem) 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .back-link {
+            width: fit-content;
+            color: rgba(255, 255, 255, 0.78);
+            text-decoration: none;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: clamp(2rem, 6vw, 4rem);
+            opacity: 0;
+            transform: translateY(16px);
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+            transform: translateY(14px);
+        }
+
+        .eyebrow {
+            color: rgba(255, 255, 255, 0.56);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            margin-bottom: 0.9rem;
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        h1 {
+            font-size: clamp(3rem, 12vw, 7.5rem);
+            line-height: 0.9;
+            letter-spacing: 0;
+            margin-bottom: 1.2rem;
+            opacity: 0;
+            transform: translateY(24px);
+            background: linear-gradient(45deg, #fff, rgba(255,255,255,0.55), #fff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 8s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .intro {
+            max-width: 620px;
+            color: rgba(255, 255, 255, 0.68);
+            line-height: 1.7;
+            font-size: clamp(1rem, 2.8vw, 1.18rem);
+            margin-bottom: clamp(2rem, 6vw, 3.5rem);
+            opacity: 0;
+            transform: translateY(22px);
+        }
+
+        .project-list {
+            display: grid;
+            gap: 1rem;
+            list-style: none;
+            opacity: 0;
+            transform: translateY(26px);
+        }
+
+        .project {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.035);
+            backdrop-filter: blur(8px);
+            padding: clamp(1.1rem, 4vw, 1.6rem);
+            transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+        }
+
+        .project::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+        }
+
+        .project:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.065);
+        }
+
+        .project:hover::before {
+            opacity: 1;
+        }
+
+        .project a {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #fff;
+            font-size: clamp(1.25rem, 4vw, 1.7rem);
+            font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 0.55rem;
+        }
+
+        .project a::after {
+            content: '→';
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.55);
+            transition: transform 0.25s ease, color 0.25s ease;
+        }
+
+        .project:hover a::after {
+            color: #fff;
+            transform: translateX(4px);
+        }
+
+        .project p {
+            position: relative;
+            max-width: 620px;
+            color: rgba(255, 255, 255, 0.68);
+            line-height: 1.6;
+        }
+
+        .project-meta {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .project-meta span {
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.66);
+            padding: 0.3rem 0.5rem;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                justify-content: flex-start;
+                padding-top: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <main class="page">
+        <a class="back-link" href="./index.html">Back</a>
+
+        <div class="eyebrow">Projects</div>
+        <h1>More</h1>
+        <p class="intro">Small projects, experiments, and tools that do not need to crowd the first screen.</p>
+
+        <ul class="project-list">
+            <li class="project">
+                <a href="https://flighter-git-main-asrar-farooqs-projects.vercel.app/" target="_blank" rel="noopener">Flighter</a>
+                <p>Live nearby aircraft rendered as a fullscreen LED-style flight board.</p>
+                <div class="project-meta">
+                    <span>Next.js</span>
+                    <span>ADS-B</span>
+                    <span>Canvas</span>
+                </div>
+            </li>
+        </ul>
+    </main>
+
+    <script>
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const canvas = document.querySelector('#canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        camera.position.z = 5;
+
+        const particleCount = isMobile ? 3500 : 9000;
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const speeds = new Float32Array(particleCount);
+
+        for (let i = 0; i < particleCount; i++) {
+            const index = i * 3;
+            positions[index] = (Math.random() - 0.5) * 12;
+            positions[index + 1] = (Math.random() - 0.5) * 8;
+            positions[index + 2] = (Math.random() - 0.5) * 8;
+
+            colors[index] = 0.82 + Math.random() * 0.18;
+            colors[index + 1] = 0.82 + Math.random() * 0.18;
+            colors[index + 2] = 1;
+            speeds[i] = 0.2 + Math.random() * 0.8;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: isMobile ? 0.012 : 0.009,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending
+        });
+
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        const mouse = new THREE.Vector2(0, 0);
+        const targetMouse = new THREE.Vector2(0, 0);
+
+        function setPointer(x, y) {
+            targetMouse.x = (x / window.innerWidth) * 2 - 1;
+            targetMouse.y = -(y / window.innerHeight) * 2 + 1;
+        }
+
+        window.addEventListener('mousemove', (event) => setPointer(event.clientX, event.clientY));
+        window.addEventListener('touchmove', (event) => {
+            if (event.touches[0]) setPointer(event.touches[0].clientX, event.touches[0].clientY);
+        }, { passive: true });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = performance.now() * 0.001;
+            mouse.x += (targetMouse.x - mouse.x) * 0.055;
+            mouse.y += (targetMouse.y - mouse.y) * 0.055;
+
+            const pos = geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                const index = i * 3;
+                const drift = Math.sin(time * speeds[i] + i) * 0.0018;
+                pos[index] += drift + mouse.x * 0.0008;
+                pos[index + 1] += Math.cos(time * speeds[i] + i) * 0.0015 + mouse.y * 0.0008;
+
+                if (pos[index] > 6) pos[index] = -6;
+                if (pos[index] < -6) pos[index] = 6;
+                if (pos[index + 1] > 4) pos[index + 1] = -4;
+                if (pos[index + 1] < -4) pos[index + 1] = 4;
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+            points.rotation.y = Math.sin(time * 0.15) * 0.08;
+            points.rotation.x = Math.cos(time * 0.12) * 0.04;
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
+
+        gsap.to('.back-link', { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' });
+        gsap.to('.eyebrow', { opacity: 1, y: 0, duration: 1.2, delay: 0.12, ease: 'power3.out' });
+        gsap.to('h1', { opacity: 1, y: 0, duration: 1.35, delay: 0.2, ease: 'power3.out' });
+        gsap.to('.intro', { opacity: 1, y: 0, duration: 1.35, delay: 0.34, ease: 'power3.out' });
+        gsap.to('.project-list', { opacity: 1, y: 0, duration: 1.35, delay: 0.5, ease: 'power3.out' });
+
+        animate();
+    </script>
+</body>
+</html>
